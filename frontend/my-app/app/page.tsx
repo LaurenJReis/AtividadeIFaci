@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Botao from "./components/Botao";
 import Card from "./components/Card";
+import ModalDispositivo from "./components/ModalDispositivo";
 
 type DeviceStatus = "online" | "offline" | "alerta";
 
@@ -74,6 +75,10 @@ export default function Home() {
   const [carregando, setCarregando] = useState(true);
   const [acaoEmAndamento, setAcaoEmAndamento] = useState<string | null>(null);
 
+  // Modal
+  const [modalAberto, setModalAberto] = useState(false);
+  const [dispositivoEditando, setDispositivoEditando] = useState<Dispositivo | null>(null);
+
   const pegaDados = useCallback(async () => {
     try {
       setCarregando(true);
@@ -82,7 +87,6 @@ export default function Home() {
       const lista = Array.isArray(respostaJSON)
         ? respostaJSON.map(formatarDispositivo)
         : [];
-
       setDadosBackend(lista);
     } catch (error) {
       console.error("Falha na requisição:", error);
@@ -92,16 +96,26 @@ export default function Home() {
   }, []);
 
   const deletaTudo = async () => {
+    if (!confirm("Tem certeza que deseja apagar todos os dispositivos?")) return;
     try {
       setAcaoEmAndamento("limpar");
-      await fetch(`${API_URL}/destroy`, {
-        method: "DELETE",
-      });
-
+      await fetch(`${API_URL}/destroy`, { method: "DELETE" });
       setDadosBackend([]);
-      alert("Dados excluídos com sucesso!");
     } catch (error) {
       console.error("Falha na requisição:", error);
+    } finally {
+      setAcaoEmAndamento(null);
+    }
+  };
+
+  const deletarDispositivo = async (id: string) => {
+    if (!confirm(`Deseja remover o dispositivo ${id}?`)) return;
+    try {
+      setAcaoEmAndamento(`del-${id}`);
+      await fetch(`${API_URL}/devices/${id}`, { method: "DELETE" });
+      await pegaDados();
+    } catch (error) {
+      console.error("Falha ao deletar dispositivo:", error);
     } finally {
       setAcaoEmAndamento(null);
     }
@@ -110,9 +124,7 @@ export default function Home() {
   const alternarAcao = async (id: string, tipo: "trava" | "conexao") => {
     try {
       setAcaoEmAndamento(`${tipo}-${id}`);
-      await fetch(`${API_URL}/devices/${id}/${tipo}`, {
-        method: "PATCH",
-      });
+      await fetch(`${API_URL}/devices/${id}/${tipo}`, { method: "PATCH" });
       await pegaDados();
     } catch (error) {
       console.error("Falha ao atualizar dispositivo:", error);
@@ -121,12 +133,58 @@ export default function Home() {
     }
   };
 
-useEffect(() => {
-  pegaDados();
-}, [pegaDados]);
+  const abrirCriar = () => {
+    setDispositivoEditando(null);
+    setModalAberto(true);
+  };
+
+  const abrirEditar = (dispositivo: Dispositivo) => {
+    setDispositivoEditando(dispositivo);
+    setModalAberto(true);
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+    setDispositivoEditando(null);
+  };
+
+  const salvarDispositivo = async (dados: Dispositivo) => {
+    try {
+      if (dispositivoEditando) {
+        // Editar
+        await fetch(`${API_URL}/devices/${dados.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dados),
+        });
+      } else {
+        // Criar
+        await fetch(`${API_URL}/devices`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...dados, ultimaAtualizacao: new Date().toISOString() }),
+        });
+      }
+      fecharModal();
+      await pegaDados();
+    } catch (error) {
+      console.error("Falha ao salvar dispositivo:", error);
+    }
+  };
+
+  useEffect(() => {
+    pegaDados();
+  }, [pegaDados]);
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-900">
+      <ModalDispositivo
+        aberto={modalAberto}
+        dispositivo={dispositivoEditando}
+        onFechar={fecharModal}
+        onSalvar={salvarDispositivo}
+      />
+
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
@@ -138,10 +196,12 @@ useEffect(() => {
 
           <div className="flex gap-3">
             <Botao nome="🔄️" estilo="secundario" onClick={pegaDados} disabled={carregando} />
-            <Botao nome="🗑️" estilo="deletar" onClick={deletaTudo} disabled={acaoEmAndamento === "limpar"} />
+            <Botao nome="+ Novo" estilo="confirmar" onClick={abrirCriar} disabled={false} />
+            <Botao nome="🗑️ Limpar tudo" estilo="deletar" onClick={deletaTudo} disabled={acaoEmAndamento === "limpar"} />
           </div>
         </div>
 
+        {/* Cards de resumo */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <Card>
             <p className="text-sm text-slate-500">Dispositivos</p>
@@ -162,15 +222,13 @@ useEffect(() => {
         </div>
 
         {carregando && dadosBackend.length === 0 ? (
-          <Card>
-            <p>Carregando dispositivos...</p>
-          </Card>
+          <Card><p>Carregando dispositivos...</p></Card>
         ) : null}
 
         {!carregando && dadosBackend.length === 0 ? (
           <Card>
             <p className="font-semibold">Nenhum dispositivo encontrado :(</p>
-            <p className="text-slate-500 mt-2">Necessário enviar os dados para o backend</p>
+            <p className="text-slate-500 mt-2">Clique em "+ Novo" para adicionar um dispositivo.</p>
           </Card>
         ) : null}
 
@@ -230,6 +288,18 @@ useEffect(() => {
                       estilo="secundario"
                       onClick={() => alternarAcao(item.id, "conexao")}
                       disabled={acaoEmAndamento === `conexao-${item.id}`}
+                    />
+                    <Botao
+                      nome="✏️ Editar"
+                      estilo="secundario"
+                      onClick={() => abrirEditar(item)}
+                      disabled={false}
+                    />
+                    <Botao
+                      nome="🗑️ Remover"
+                      estilo="deletar"
+                      onClick={() => deletarDispositivo(item.id)}
+                      disabled={acaoEmAndamento === `del-${item.id}`}
                     />
                   </div>
                 </div>

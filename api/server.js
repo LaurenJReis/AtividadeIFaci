@@ -45,6 +45,28 @@ api.delete("/destroy", (req, res) => {
   res.json({ msg: "Todos os dispositivos apagados" });
 });
 
+api.delete("/devices/:id", (req, res) => {
+  const index = devices.findIndex(d => d.id === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ msg: "Dispositivo não encontrado" });
+  }
+
+  devices.splice(index, 1);
+  res.json({ msg: "Dispositivo removido com sucesso" });
+});
+
+api.put("/devices/:id", (req, res) => {
+  const index = devices.findIndex(d => d.id === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ msg: "Dispositivo não encontrado" });
+  }
+
+  devices[index] = { ...devices[index], ...req.body, id: req.params.id };
+  res.json({ msg: "Dispositivo atualizado com sucesso" });
+});
+
 
 api.patch("/devices/:id/trava", (req, res) => {
   const device = devices.find(d => d.id === req.params.id);
