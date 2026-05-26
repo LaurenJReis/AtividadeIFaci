@@ -1,98 +1,109 @@
-const express = require("express");
-const cors = require("cors");
+const express = require('express')
+const cors = require('cors')
+const api = express()
 
-const api = express();
-api.use(cors());
-api.use(express.json());
+api.use(express.json())
+api.use(cors())
 
-// 🔹 Dados em memória
-let devices = [
-  {
-    id: "EQP-001",
-    nome: "Sensor Temperatura",
-    statusDispositivo: "online",
-    conexaoAtiva: true,
-    travaLiberada: false,
-    ultimaAtualizacao: new Date().toISOString(),
-    sensores: {
-      temperatura: 25,
-      pressao: 2.4,
-      umidade: 50,
-      sensorPresenca: true,
-      releSeguranca: false
+const dados = []
+const iot_data = []
+const devices = []
+let iot_id = 0
+let device_id = 0
+
+// ─── Usuários ────────────────────────────────────────────────
+api.get('/usuarios', (req, res) => {
+    res.status(200).send(dados)
+})
+
+// ─── IoT (dados OPC-UA) ──────────────────────────────────────
+api.get('/iot', (req, res) => {
+    res.status(200).send(iot_data)
+})
+
+api.get('/sensor/:id', (req, res) => {
+    const sensor_data = iot_data[req.params.id]
+    res.status(200).send(sensor_data)
+})
+
+api.post('/newData', (req, res) => {
+    const { temperatura, pressao, umidade, sensor_presenca, trava_seguranca } = req.body
+
+    if (!req.body) return res.status(400).send("Dados não encontrados")
+
+    iot_id++
+    const newData = { id: iot_id, temperatura, pressao, umidade, sensor_presenca, trava_seguranca }
+    iot_data.push(newData)
+    return res.status(201).send({ message: 'Dados recebidos com sucesso!' })
+})
+
+api.put('/sensor/:id', (req, res) => {
+    const index = iot_data.findIndex(p => p.id === parseInt(req.params.id))
+    if (index !== -1) {
+        iot_data[index] = { id: parseInt(req.params.id), ...req.body }
+        return res.status(200).send({ msg: "Dados do sensor atualizados!" })
     }
-  }
-];
+    return res.status(404).send({ msg: "Sensor não encontrado!" })
+})
 
-api.get("/devices", (req, res) => {
-  res.json(devices);
-});
+// ─── Devices ─────────────────────────────────────────────────
+api.get('/devices', (req, res) => {
+    res.status(200).send(devices)
+})
 
+api.get('/devices/:id', (req, res) => {
+    const device = devices.find(d => d.id === parseInt(req.params.id))
+    if (!device) return res.status(404).send({ msg: "Dispositivo não encontrado!" })
+    res.status(200).send(device)
+})
 
-api.post("/devices", (req, res) => {
-  const novo = req.body;
+api.post('/devices', (req, res) => {
+    const { nome, tipo, ip, descricao } = req.body
+    if (!nome || !tipo) return res.status(400).send({ msg: "Nome e tipo são obrigatórios!" })
 
-  devices.push(novo);
+    device_id++
+    const newDevice = {
+        id: device_id,
+        nome,
+        tipo,
+        ip: ip || "—",
+        descricao: descricao || "",
+        status: "online",
+        criadoEm: new Date().toISOString()
+    }
+    devices.push(newDevice)
+    return res.status(201).send({ msg: "Dispositivo criado com sucesso!", device: newDevice })
+})
 
-  res.status(201).json({
-    msg: "Dispositivo criado com sucesso"
-  });
-});
+api.put('/devices/:id', (req, res) => {
+    const index = devices.findIndex(d => d.id === parseInt(req.params.id))
+    if (index === -1) return res.status(404).send({ msg: "Dispositivo não encontrado!" })
 
+    devices[index] = { ...devices[index], ...req.body, id: parseInt(req.params.id) }
+    return res.status(200).send({ msg: "Dispositivo atualizado!", device: devices[index] })
+})
 
-api.delete("/destroy", (req, res) => {
-  devices = [];
-  res.json({ msg: "Todos os dispositivos apagados" });
-});
+api.delete('/devices/:id', (req, res) => {
+    const index = devices.findIndex(d => d.id === parseInt(req.params.id))
+    if (index === -1) return res.status(404).send({ msg: "Dispositivo não encontrado!" })
 
-api.delete("/devices/:id", (req, res) => {
-  const index = devices.findIndex(d => d.id === req.params.id);
+    devices.splice(index, 1)
+    return res.status(200).send({ msg: "Dispositivo removido!" })
+})
 
-  if (index === -1) {
-    return res.status(404).json({ msg: "Dispositivo não encontrado" });
-  }
+api.patch('/devices/:id/status', (req, res) => {
+    const index = devices.findIndex(d => d.id === parseInt(req.params.id))
+    if (index === -1) return res.status(404).send({ msg: "Dispositivo não encontrado!" })
 
-  devices.splice(index, 1);
-  res.json({ msg: "Dispositivo removido com sucesso" });
-});
+    const { status } = req.body
+    if (!["online", "offline", "alerta"].includes(status))
+        return res.status(400).send({ msg: "Status inválido. Use: online, offline, alerta" })
 
-api.put("/devices/:id", (req, res) => {
-  const index = devices.findIndex(d => d.id === req.params.id);
+    devices[index].status = status
+    return res.status(200).send({ msg: "Status atualizado!", device: devices[index] })
+})
 
-  if (index === -1) {
-    return res.status(404).json({ msg: "Dispositivo não encontrado" });
-  }
-
-  devices[index] = { ...devices[index], ...req.body, id: req.params.id };
-  res.json({ msg: "Dispositivo atualizado com sucesso" });
-});
-
-
-api.patch("/devices/:id/trava", (req, res) => {
-  const device = devices.find(d => d.id === req.params.id);
-
-  if (!device) {
-    return res.status(404).json({ msg: "Dispositivo não encontrado" });
-  }
-
-  device.travaLiberada = !device.travaLiberada;
-
-  res.json({ msg: "Trava alterada" });
-});
-
-
-api.patch("/devices/:id/conexao", (req, res) => {
-  const device = devices.find(d => d.id === req.params.id);
-
-  if (!device) {
-    return res.status(404).json({ msg: "Dispositivo não encontrado" });
-  }
-
-  device.conexaoAtiva = !device.conexaoAtiva;
-
-  res.json({ msg: "Conexão alterada" });
-});
-
-api.listen(8081, () => {
-  console.log("API rodando na porta 8081");
-});
+const porta = 8080
+api.listen(porta, () => {
+    console.log(`API rodando na porta ${porta}`)
+})

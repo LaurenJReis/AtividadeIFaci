@@ -1,0 +1,8 @@
+services:
+  nodered-ifaci:
+    image: nodered/node-red
+    container_name: nodered-ifaci
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./nodered:/data

@@ -189,7 +189,7 @@ export default function Home() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
-              ATIVIDADE - INTERFACE INDUSTRIAIS
+              INDUSTRIAL
             </p>
             <h1 className="text-3xl md:text-4xl font-bold">Tela Equipamentos</h1>
           </div>
