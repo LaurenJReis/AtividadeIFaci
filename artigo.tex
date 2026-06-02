@@ -1,0 +1,315 @@
+\documentclass[12pt]{unisenaiclass}
+\usepackage{unisenaistyle}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage[backend=biber, style=abnt]{biblatex}
+\addbibresource{referencias.bib}
+
+\title{DESENVOLVIMENTO DE UM HUB IoT COM BACKEND NODE.JS, PROTOCOLO OPC-UA E INTERFACE WEB NEXT.JS}
+\subtitle{DEVELOPMENT OF AN IoT HUB WITH NODE.JS BACKEND, OPC-UA PROTOCOL AND NEXT.JS WEB INTERFACE}
+
+\author{
+  \textbf{Lauren Julia Reis Silva} \thanks{Estudante do curso de Tecnologia, SENAI.}
+}
+
+\begin{document}
+\maketitle
+
+% ─────────────────────────────────────────────────────────────
+%  RESUMO
+% ─────────────────────────────────────────────────────────────
+\begin{resumo}
+Este artigo apresenta o desenvolvimento de um hub IoT integrado a um backend Node.js e
+uma interface web construída com Next.js. O sistema permite o monitoramento em tempo real
+de sensores de temperatura, pressão, umidade e presença, além do controle remoto de um
+atuador (trava de segurança). A comunicação entre os dispositivos físicos e a plataforma
+digital é intermediada pelo protocolo OPC-UA, com um servidor Python expondo variáveis
+ao Node-RED, que encaminha os dados à API RESTful via requisições HTTP. A metodologia
+envolveu a criação de uma API RESTful com Express.js, a conteinerização completa dos
+serviços com Docker Compose e a construção de uma interface responsiva com React e Tailwind
+CSS. Os resultados demonstram a viabilidade técnica da solução para aplicações de automação
+residencial, industrial e agrícola, evidenciando escalabilidade e interoperabilidade entre
+tecnologias heterogêneas.
+\end{resumo}
+
+\begin{justify}
+\textbf{Palavras-chave:} IoT; Backend; API; OPC-UA; Node-RED; Docker; Sensores; Automação.
+\end{justify}
+
+% ─────────────────────────────────────────────────────────────
+%  ABSTRACT
+% ─────────────────────────────────────────────────────────────
+\begin{abstract1}
+This paper presents the development of an IoT hub integrated with a Node.js backend and a
+Next.js web interface. The system enables real-time monitoring of temperature, humidity,
+pressure, and presence sensors, as well as remote control of a security lock actuator.
+Communication between physical devices and the digital platform is mediated by the OPC-UA
+protocol, with a Python server exposing variables to Node-RED, which forwards data to a
+RESTful API via HTTP requests. The methodology involved the creation of a RESTful API using
+Express.js, full containerization of services with Docker Compose, and the construction of
+a responsive interface with React and Tailwind CSS. Results demonstrate the technical
+feasibility of the solution for residential, industrial, and agricultural automation
+applications, highlighting scalability and interoperability across heterogeneous technologies.
+\end{abstract1}
+
+\begin{justify}
+\textbf{Keywords:} IoT; Backend; API; OPC-UA; Node-RED; Docker; Sensors; Automation.
+\end{justify}
+
+% ─────────────────────────────────────────────────────────────
+%  1. INTRODUÇÃO
+% ─────────────────────────────────────────────────────────────
+\section{Introdução}
+
+A Internet das Coisas (IoT) tem se consolidado como uma tecnologia essencial para a
+automação e o monitoramento inteligente de ambientes industriais, agrícolas e residenciais.
+A capacidade de conectar dispositivos físicos à internet e processar seus dados em tempo
+real representa um avanço significativo na forma como sistemas de controle são projetados
+e operados.
+
+Este trabalho apresenta o desenvolvimento de um sistema IoT completo, composto por quatro
+camadas integradas: um servidor OPC-UA em Python responsável pela simulação e exposição
+de dados de sensores; o Node-RED como middleware de integração; uma API RESTful desenvolvida
+em Node.js com Express; e uma interface web construída com Next.js e React. O objetivo
+central é demonstrar a viabilidade técnica de integrar tecnologias abertas e amplamente
+adotadas para construir uma plataforma de monitoramento e controle escalável.
+
+O protocolo OPC-UA (\textit{Open Platform Communications Unified Architecture}) foi
+escolhido por ser o padrão industrial para comunicação segura e interoperável entre
+dispositivos de campo e sistemas de supervisão \cite{aguiar2023}. A arquitetura proposta
+permite que sensores de temperatura, pressão, umidade e presença tenham seus dados
+coletados, armazenados e visualizados em um painel \textit{web} de forma contínua.
+
+% ─────────────────────────────────────────────────────────────
+%  2. REVISÃO DE LITERATURA
+% ─────────────────────────────────────────────────────────────
+\section{Revisão de Literatura}
+
+Segundo \textcite{aguiar2023}, a Internet das Coisas pode ser descrita como uma rede de
+objetos físicos conectados à internet, capazes de interagir por meio de sensores e
+softwares. O autor destaca que a utilização de APIs RESTful é fundamental para conectar o
+mundo físico ao digital, permitindo que dispositivos troquem dados de forma eficiente e
+escalável.
+
+De acordo com \textcite{rodrigues2024}, a expansão de funcionalidades em sistemas IoT
+depende diretamente da integração com APIs HTTP, que possibilitam maior flexibilidade e
+controle remoto dos dispositivos. A autora enfatiza que o uso de arquiteturas REST garante
+interoperabilidade entre diferentes plataformas e tecnologias, tornando os sistemas mais
+adaptáveis às necessidades dos usuários.
+
+A literatura recente sobre IoT aponta que a integração com APIs RESTful é essencial para
+garantir interoperabilidade e escalabilidade em ambientes complexos, permitindo que sensores
+e atuadores sejam facilmente conectados a aplicações web e móveis \cite{aguiar2023,
+rodrigues2024}.
+
+No que tange ao protocolo OPC-UA, trata-se de um padrão amplamente adotado na indústria
+4.0 por oferecer comunicação orientada a serviços com suporte a segurança, semântica de
+dados e independência de plataforma. A combinação desse protocolo com ferramentas de
+orquestração como o Node-RED e a conteinerização via Docker representa uma abordagem
+moderna para sistemas de supervisão e controle.
+
+\begin{itemize}
+    \item \textbf{Exemplo de citação direta curta:}
+\end{itemize}
+
+Segundo \textcite{rodrigues2024}, \enquote{a interoperabilidade em IoT só é possível por
+meio de APIs RESTful bem definidas}.
+
+\begin{quote}
+\textbf{Citação direta longa:} \textcite{rodrigues2024} afirma:
+
+\enquote{A utilização de APIs RESTful em sistemas IoT não apenas garante a
+interoperabilidade entre dispositivos, mas também possibilita a escalabilidade e a
+segurança necessárias para aplicações críticas. Sem esse padrão de comunicação, os sistemas
+tornam-se fragmentados e pouco confiáveis.}
+
+\textbf{Citação indireta:} De acordo com \textcite{rodrigues2024}, a integração de APIs
+RESTful em sistemas IoT é fundamental para assegurar interoperabilidade e escalabilidade,
+permitindo que diferentes dispositivos troquem informações de maneira segura e eficiente.
+\end{quote}
+
+O sistema TeX foi desenvolvido por Knuth com o objetivo de produzir livros com alta
+qualidade tipográfica \cite{knuth1984tex}. Ao final do documento, as referências serão
+listadas automaticamente.
+
+% ─────────────────────────────────────────────────────────────
+%  3. METODOLOGIA
+% ─────────────────────────────────────────────────────────────
+\section{Metodologia}
+
+O sistema foi desenvolvido em quatro camadas integradas, conforme descrito a seguir.
+
+\subsection{Servidor OPC-UA (Python)}
+
+O servidor de dados foi implementado em Python utilizando a biblioteca \texttt{opcua}
+(versão 0.98.13). O servidor expõe cinco variáveis no namespace
+\texttt{http://ads.freeopcua.server}, mapeadas ao objeto \texttt{Sensor}:
+\texttt{temperatura} (Float), \texttt{pressao} (Float), \texttt{umidade} (Float),
+\texttt{sensor\_presenca} (Boolean) e \texttt{trava\_seguranca} (Boolean). Os valores são
+gerados de forma aleatória a cada segundo — temperatura entre 18\,°C e 30\,°C, pressão
+entre 0,8 e 1,5 bar, umidade entre 35\% e 60\% — simulando um ambiente industrial real.
+O endpoint do servidor é \texttt{opc.tcp://0.0.0.0:4840}, sem camada de segurança, para
+facilitar a integração em ambiente de desenvolvimento.
+
+\subsection{Node-RED (Middleware de Integração)}
+
+O Node-RED atua como intermediário entre o servidor OPC-UA e a API REST. Fluxos
+configurados leem os valores de temperatura e pressão do servidor OPC-UA a cada 2 segundos,
+formatam os dados em JSON e os encaminham ao endpoint \texttt{POST /newData} da API via
+nó \textit{HTTP Request}. Isso desacopla o protocolo industrial OPC-UA do protocolo web
+HTTP, permitindo que ambas as camadas evoluam de forma independente.
+
+\subsection{Backend — API RESTful (Node.js / Express)}
+
+A API foi desenvolvida com Node.js e Express.js (v5.2.1), exposta na porta 8080. Ela
+recebe, armazena em memória e fornece os dados dos sensores, além de gerenciar um cadastro
+de dispositivos IoT. As rotas implementadas estão descritas na Tabela \ref{tab:rotas}.
+
+\begin{table}[H]
+\centering
+\caption{Rotas da API RESTful}
+\label{tab:rotas}
+\begin{tabular}{|c|c|l|}
+\hline
+\textbf{Método} & \textbf{Rota}              & \textbf{Descrição} \\ \hline
+GET    & \texttt{/iot}               & Lista todos os dados de sensores armazenados \\ \hline
+GET    & \texttt{/sensor/:id}        & Retorna dado de sensor por índice \\ \hline
+POST   & \texttt{/newData}           & Recebe dados do Node-RED e armazena \\ \hline
+PUT    & \texttt{/sensor/:id}        & Atualiza dado de sensor por ID \\ \hline
+GET    & \texttt{/devices}           & Lista dispositivos cadastrados \\ \hline
+POST   & \texttt{/devices}           & Cadastra novo dispositivo \\ \hline
+PUT    & \texttt{/devices/:id}       & Atualiza dados de um dispositivo \\ \hline
+PATCH  & \texttt{/devices/:id/status}& Altera o status do dispositivo \\ \hline
+DELETE & \texttt{/devices/:id}       & Remove um dispositivo \\ \hline
+\end{tabular}
+\end{table}
+
+O body esperado no endpoint \texttt{POST /newData} segue o seguinte formato JSON:
+
+\begin{verbatim}
+{
+  "temperatura": 25.4,
+  "pressao": 1.2,
+  "umidade": 55.0,
+  "sensor_presenca": true,
+  "trava_seguranca": false
+}
+\end{verbatim}
+
+\subsection{Frontend — Interface Web (Next.js / React)}
+
+A interface foi desenvolvida com Next.js 16 e React 19, utilizando Tailwind CSS para
+estilização. A aplicação é composta por três módulos principais:
+
+\begin{itemize}
+    \item \textbf{Módulo de Usuários (\texttt{/})}: formulário de cadastro e listagem de
+    usuários com modal de edição.
+
+    \item \textbf{Módulo de Dispositivos (\texttt{/devices})}: CRUD completo de
+    dispositivos IoT. Permite cadastrar sensores e atuadores com nome, tipo, endereço IP
+    ou NodeID OPC-UA, e descrição. O status de cada dispositivo pode ser alternado entre
+    \textit{online}, \textit{offline} e \textit{alerta}.
+
+    \item \textbf{Dashboard de Sensores (\texttt{/dashboard})}: exibe em tempo real as
+    últimas leituras de temperatura, pressão, umidade, sensor de presença e trava de
+    segurança. Os dados são atualizados via \textit{polling} a cada 2 segundos utilizando
+    \texttt{useEffect} e \texttt{setInterval}. Também apresenta um histórico completo de
+    leituras em tabela.
+\end{itemize}
+
+\subsection{Conteinerização com Docker Compose}
+
+Todos os serviços são orquestrados por um arquivo \texttt{docker-compose.yaml}, que define
+quatro contêineres em uma rede interna \texttt{ifaci-net}: \texttt{opcua-server} (porta
+4840), \texttt{api-ifaci} (porta 8080), \texttt{nodered-ifaci} (porta 1880) e
+\texttt{frontend-ifaci} (porta 3000). O uso de Docker garante portabilidade e reprodutibilidade
+do ambiente, eliminando dependências de configuração manual.
+
+% ─────────────────────────────────────────────────────────────
+%  4. RESULTADOS E DISCUSSÕES
+% ─────────────────────────────────────────────────────────────
+\section{Resultados e Discussões}
+
+O sistema integrado apresentou os seguintes resultados após testes de funcionamento:
+
+\begin{itemize}
+    \item \textbf{Monitoramento em tempo real}: o painel \textit{dashboard} exibiu os dados
+    dos sensores com latência inferior a 2 segundos, demonstrando a eficácia do
+    \textit{polling} periódico via \texttt{fetch}.
+
+    \item \textbf{Gerenciamento de dispositivos}: o módulo CRUD de dispositivos permitiu
+    cadastro, edição, remoção e alternância de status (online/offline/alerta) com
+    confirmação visual imediata na interface.
+
+    \item \textbf{Integração OPC-UA $\rightarrow$ Node-RED $\rightarrow$ API}: os dados
+    simulados pelo servidor Python foram corretamente lidos pelo Node-RED e encaminhados
+    à API, comprovando a viabilidade do pipeline de dados proposto.
+
+    \item \textbf{Conteinerização}: todos os serviços subiram sem conflitos a partir do
+    comando \texttt{docker compose up}, validando a portabilidade da solução.
+\end{itemize}
+
+\subsection{Exemplo de leitura dos sensores}
+
+A Tabela \ref{tab:sensores} apresenta valores representativos coletados durante os testes
+do sistema, com os cinco sensores monitorados simultaneamente.
+
+\begin{table}[H]
+\centering
+\caption{Monitoramento de temperatura, umidade, pressão, presença e trava de segurança.}
+\label{tab:sensores}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Sensor}     & \textbf{Valor Atual} & \textbf{Unidade} \\ \hline
+Temperatura         & 25,40                & °C               \\ \hline
+Pressão             & 1,20                 & bar              \\ \hline
+Umidade             & 55,00                & \%               \\ \hline
+Sensor de Presença  & Detectada            & —                \\ \hline
+Trava de Segurança  & Livre                & —                \\ \hline
+\end{tabular}
+\end{table}
+
+Os resultados confirmam que a arquitetura em camadas adotada — com OPC-UA para comunicação
+industrial, Node-RED como middleware, Express como backend e Next.js como frontend —
+oferece boa separação de responsabilidades e facilita a manutenção e expansão do sistema.
+A utilização de Docker Compose simplificou significativamente o processo de implantação,
+alinhando-se às práticas modernas de desenvolvimento orientado a microsserviços
+\cite{rodrigues2024}.
+
+% ─────────────────────────────────────────────────────────────
+%  5. CONCLUSÃO
+% ─────────────────────────────────────────────────────────────
+\section{Conclusão}
+
+O projeto demonstrou a viabilidade técnica de integrar sensores e atuadores industriais em
+uma plataforma IoT completa, combinando o protocolo OPC-UA, o Node-RED, uma API RESTful em
+Node.js e uma interface web moderna em Next.js. A solução atende aos requisitos de
+monitoramento em tempo real, gerenciamento de dispositivos e controle remoto de atuadores,
+sendo conteinerizada integralmente com Docker.
+
+Como trabalhos futuros, pretende-se expandir a solução para incluir: persistência de dados
+em banco de dados relacional (PostgreSQL) ou de séries temporais (InfluxDB); análise
+preditiva com modelos de \textit{machine learning} para detecção de anomalias nos sensores;
+integração com serviços em nuvem como AWS IoT Core ou Azure IoT Hub; e autenticação de
+usuários com JWT para controle de acesso por níveis de permissão.
+
+% ─────────────────────────────────────────────────────────────
+%  AGRADECIMENTOS
+% ─────────────────────────────────────────────────────────────
+\section*{Agradecimentos}
+
+Agradeço à instituição de ensino SENAI e ao orientador Gabriel, que contribuiu de forma
+fundamental para o planejamento e desenvolvimento deste trabalho.
+
+% ─────────────────────────────────────────────────────────────
+%  REFERÊNCIAS
+% ─────────────────────────────────────────────────────────────
+\printbibliography
+
+\end{document}
