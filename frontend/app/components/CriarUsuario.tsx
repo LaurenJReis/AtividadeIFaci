@@ -5,10 +5,10 @@ export default function CriarUsuario() {
     const [form, setForm] = useState({ nome: "", email: "", senha: "" })
 
     return (
-        <div className="w-[38vw] h-fit bg-[#161b22] border border-[#30363d] rounded-lg p-5 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-[#30363d] pb-3">
-                <div className="w-1.5 h-4 bg-[#00d4ff] rounded-sm" />
-                <h2 className="text-xs font-mono text-[#00d4ff] tracking-widest uppercase">
+        <div className="w-[38vw] h-fit bg-[#13111c] border border-[#2d2040] rounded-lg p-5 flex flex-col gap-4">
+            <div className="flex items-center gap-2 border-b border-[#2d2040] pb-3">
+                <div className="w-1.5 h-4 bg-[#a855f7] rounded-sm" />
+                <h2 className="text-xs font-mono text-[#a855f7] tracking-widest uppercase">
                     Registrar Usuário
                 </h2>
             </div>
@@ -28,8 +28,8 @@ export default function CriarUsuario() {
                             value={form[f.key as keyof typeof form]}
                             onChange={e => setForm({ ...form, [f.key]: e.target.value })}
                             placeholder={f.placeholder}
-                            className="bg-[#0d1117] border border-[#30363d] text-[#e6edf3] text-sm font-mono
-                                       rounded px-3 py-2 focus:outline-none focus:border-[#00d4ff] transition-colors
+                            className="bg-[#0d0d14] border border-[#2d2040] text-[#e6edf3] text-sm font-mono
+                                       rounded px-3 py-2 focus:outline-none focus:border-[#a855f7] transition-colors
                                        placeholder:text-[#484f58]"
                         />
                     </div>
@@ -37,8 +37,8 @@ export default function CriarUsuario() {
             </div>
 
             <button className="mt-1 py-2 px-4 text-xs font-mono tracking-widest uppercase rounded
-                               bg-[#00d4ff15] border border-[#00d4ff] text-[#00d4ff]
-                               hover:bg-[#00d4ff] hover:text-[#0d1117] transition-all cursor-pointer">
+                               bg-[#a855f715] border border-[#a855f7] text-[#a855f7]
+                               hover:bg-[#a855f7] hover:text-[#0d0d14] transition-all cursor-pointer">
                 [ Registrar ]
             </button>
         </div>

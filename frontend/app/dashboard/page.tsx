@@ -40,26 +40,26 @@ export default function Dashboard() {
     }, [])
 
     return (
-        <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
+        <div className="min-h-screen bg-[#0d0d14] text-[#e6edf3]">
             <Header name="Dashboard de Sensores" />
 
             {/* Barra de status */}
-            <div className="px-6 py-2 bg-[#0d1117] border-b border-[#30363d] flex items-center gap-4">
+            <div className="px-6 py-2 bg-[#0d0d14] border-b border-[#2d2040] flex items-center gap-4">
                 <span className="text-[10px] font-mono text-[#484f58] tracking-widest">
                     MÓDULO: SENSOR MONITOR
                 </span>
-                <span className="text-[#30363d]">·</span>
+                <span className="text-[#2d2040]">·</span>
                 <span className="text-[10px] font-mono text-[#484f58]">
                     POLL: 2000ms
                 </span>
-                <span className="text-[#30363d]">·</span>
+                <span className="text-[#2d2040]">·</span>
                 <span className="text-[10px] font-mono text-[#484f58]">
                     REGISTROS: {historico.length}
                 </span>
                 <div className="flex-1" />
-                <div className={`w-1.5 h-1.5 rounded-full ${erro ? "bg-[#ff4444]" : "bg-[#00ff88]"}`}
-                    style={!erro ? { boxShadow: "0 0 6px #00ff88" } : {}} />
-                <span className={`text-[10px] font-mono tracking-widest ${erro ? "text-[#ff4444]" : "text-[#00ff88]"}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${erro ? "bg-[#ff4444]" : "bg-[#34d399]"}`}
+                    style={!erro ? { boxShadow: "0 0 6px #34d399" } : {}} />
+                <span className={`text-[10px] font-mono tracking-widest ${erro ? "text-[#ff4444]" : "text-[#34d399]"}`}>
                     {erro ? "FALHA" : "ATIVO"}
                 </span>
             </div>
@@ -76,21 +76,21 @@ export default function Dashboard() {
                 {ultimo && (
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <div className="w-1.5 h-4 bg-[#00d4ff] rounded-sm" />
-                            <h2 className="text-xs font-mono text-[#00d4ff] tracking-widest uppercase">
+                            <div className="w-1.5 h-4 bg-[#a855f7] rounded-sm" />
+                            <h2 className="text-xs font-mono text-[#a855f7] tracking-widest uppercase">
                                 Última Leitura — ID #{ultimo.id}
                             </h2>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
 
                             {[
-                                { label: "Temperatura", valor: `${ultimo.temperatura?.toFixed(2)}`, unidade: "°C", cor: "#ff6b35" },
-                                { label: "Pressão",     valor: `${ultimo.pressao?.toFixed(2)}`,     unidade: "bar", cor: "#00d4ff" },
-                                { label: "Umidade",     valor: `${ultimo.umidade?.toFixed(2)}`,     unidade: "%",   cor: "#00aaff" },
+                                { label: "Temperatura", valor: `${ultimo.temperatura?.toFixed(2)}`, unidade: "°C", cor: "#f97316" },
+                                { label: "Pressão",     valor: `${ultimo.pressao?.toFixed(2)}`,     unidade: "bar", cor: "#a855f7" },
+                                { label: "Umidade",     valor: `${ultimo.umidade?.toFixed(2)}`,     unidade: "%",   cor: "#38bdf8" },
                             ].map(card => (
                                 <div key={card.label}
-                                    className="bg-[#161b22] border border-[#30363d] rounded-lg p-4
-                                               hover:border-[#484f58] transition-colors">
+                                    className="bg-[#13111c] border border-[#2d2040] rounded-lg p-4
+                                               hover:border-[#3d2f58] transition-colors">
                                     <p className="text-[9px] font-mono text-[#484f58] uppercase tracking-widest mb-2">
                                         {card.label}
                                     </p>
@@ -101,27 +101,27 @@ export default function Dashboard() {
                                 </div>
                             ))}
 
-                            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 hover:border-[#484f58] transition-colors">
+                            <div className="bg-[#13111c] border border-[#2d2040] rounded-lg p-4 hover:border-[#3d2f58] transition-colors">
                                 <p className="text-[9px] font-mono text-[#484f58] uppercase tracking-widest mb-2">
                                     Sensor Presença
                                 </p>
                                 <span className={`inline-block px-2 py-1 rounded text-xs font-mono font-semibold border ${
                                     ultimo.sensor_presenca
-                                        ? "bg-[#00ff8815] border-[#00ff88] text-[#00ff88]"
-                                        : "bg-[#30363d30] border-[#30363d] text-[#484f58]"
+                                        ? "bg-[#34d39915] border-[#34d399] text-[#34d399]"
+                                        : "bg-[#2d204030] border-[#2d2040] text-[#484f58]"
                                 }`}>
                                     {ultimo.sensor_presenca ? "● ACIONADO" : "○ INATIVO"}
                                 </span>
                             </div>
 
-                            <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 hover:border-[#484f58] transition-colors">
+                            <div className="bg-[#13111c] border border-[#2d2040] rounded-lg p-4 hover:border-[#3d2f58] transition-colors">
                                 <p className="text-[9px] font-mono text-[#484f58] uppercase tracking-widest mb-2">
                                     Trava Segurança
                                 </p>
                                 <span className={`inline-block px-2 py-1 rounded text-xs font-mono font-semibold border ${
                                     ultimo.trava_seguranca
                                         ? "bg-[#ff444415] border-[#ff4444] text-[#ff4444]"
-                                        : "bg-[#00ff8815] border-[#00ff88] text-[#00ff88]"
+                                        : "bg-[#34d39915] border-[#34d399] text-[#34d399]"
                                 }`}>
                                     {ultimo.trava_seguranca ? "🔒 TRAVADO" : "🔓 LIVRE"}
                                 </span>
@@ -141,7 +141,7 @@ export default function Dashboard() {
                     </div>
 
                     {historico.length === 0 && !erro && (
-                        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6 text-center">
+                        <div className="bg-[#13111c] border border-[#2d2040] rounded-lg p-6 text-center">
                             <p className="text-xs font-mono text-[#484f58] tracking-wider">
                                 AGUARDANDO DADOS DO OPC-UA...
                             </p>
@@ -149,10 +149,10 @@ export default function Dashboard() {
                     )}
 
                     {historico.length > 0 && (
-                        <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-x-auto">
+                        <div className="bg-[#13111c] border border-[#2d2040] rounded-lg overflow-x-auto">
                             <table className="w-full text-xs font-mono">
                                 <thead>
-                                    <tr className="border-b border-[#30363d] bg-[#0d1117]">
+                                    <tr className="border-b border-[#2d2040] bg-[#0d0d14]">
                                         {["ID", "TEMP (°C)", "PRESSÃO (bar)", "UMIDADE (%)", "PRESENÇA", "TRAVA"].map(h => (
                                             <th key={h} className="text-left px-4 py-3 text-[#484f58] tracking-widest font-normal">
                                                 {h}
@@ -163,17 +163,17 @@ export default function Dashboard() {
                                 <tbody>
                                     {[...historico].reverse().map((item, i) => (
                                         <tr key={item.id}
-                                            className={`border-b border-[#30363d30] transition-colors
-                                                ${i === 0 ? "bg-[#00d4ff08]" : "hover:bg-[#161b22]"}`}>
+                                            className={`border-b border-[#2d204030] transition-colors
+                                                ${i === 0 ? "bg-[#a855f708]" : "hover:bg-[#13111c]"}`}>
                                             <td className="px-4 py-2.5 text-[#484f58]">#{item.id}</td>
-                                            <td className="px-4 py-2.5 text-[#ff6b35]">{item.temperatura?.toFixed(2)}</td>
-                                            <td className="px-4 py-2.5 text-[#00d4ff]">{item.pressao?.toFixed(2)}</td>
-                                            <td className="px-4 py-2.5 text-[#00aaff]">{item.umidade?.toFixed(2)}</td>
+                                            <td className="px-4 py-2.5 text-[#f97316]">{item.temperatura?.toFixed(2)}</td>
+                                            <td className="px-4 py-2.5 text-[#a855f7]">{item.pressao?.toFixed(2)}</td>
+                                            <td className="px-4 py-2.5 text-[#38bdf8]">{item.umidade?.toFixed(2)}</td>
                                             <td className="px-4 py-2.5">
                                                 <span className={`px-2 py-0.5 rounded border text-[10px] ${
                                                     item.sensor_presenca
-                                                        ? "bg-[#00ff8815] border-[#00ff88] text-[#00ff88]"
-                                                        : "bg-transparent border-[#30363d] text-[#484f58]"
+                                                        ? "bg-[#34d39915] border-[#34d399] text-[#34d399]"
+                                                        : "bg-transparent border-[#2d2040] text-[#484f58]"
                                                 }`}>
                                                     {item.sensor_presenca ? "ACIONADO" : "INATIVO"}
                                                 </span>
@@ -182,7 +182,7 @@ export default function Dashboard() {
                                                 <span className={`px-2 py-0.5 rounded border text-[10px] ${
                                                     item.trava_seguranca
                                                         ? "bg-[#ff444415] border-[#ff4444] text-[#ff4444]"
-                                                        : "bg-[#00ff8815] border-[#00ff88] text-[#00ff88]"
+                                                        : "bg-[#34d39915] border-[#34d399] text-[#34d399]"
                                                 }`}>
                                                     {item.trava_seguranca ? "TRAVADO" : "LIVRE"}
                                                 </span>

@@ -1,7 +1,7 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "API Feita com os alunos da toyota",
+  "description": "API REST para sistema IHM Industrial OPC-UA",
   "license": "ISC",
   "author": "",
   "type": "commonjs",

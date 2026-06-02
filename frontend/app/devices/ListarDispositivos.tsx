@@ -16,9 +16,9 @@ interface Props {
 }
 
 const STATUS_CONFIG = {
-    online:  { cor: "#00ff88", label: "ONLINE",  bg: "bg-[#00ff8815]", border: "border-[#00ff88]" },
+    online:  { cor: "#34d399", label: "ONLINE",  bg: "bg-[#34d39915]", border: "border-[#34d399]" },
     offline: { cor: "#ff4444", label: "OFFLINE", bg: "bg-[#ff444415]", border: "border-[#ff4444]" },
-    alerta:  { cor: "#ffaa00", label: "ALERTA",  bg: "bg-[#ffaa0015]", border: "border-[#ffaa00]" },
+    alerta:  { cor: "#f59e0b", label: "ALERTA",  bg: "bg-[#f59e0b15]", border: "border-[#f59e0b]" },
 }
 
 export default function ListarDispositivos({ refresh }: Props) {
@@ -80,11 +80,10 @@ export default function ListarDispositivos({ refresh }: Props) {
     return (
         <div className="flex-1 max-h-[88vh] overflow-y-auto flex flex-col gap-3">
 
-            {/* Cabeçalho */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-4 bg-[#00ff88] rounded-sm" />
-                    <h2 className="text-xs font-mono text-[#00ff88] tracking-widest uppercase">
+                    <div className="w-1.5 h-4 bg-[#34d399] rounded-sm" />
+                    <h2 className="text-xs font-mono text-[#34d399] tracking-widest uppercase">
                         Dispositivos Registrados
                     </h2>
                 </div>
@@ -100,7 +99,7 @@ export default function ListarDispositivos({ refresh }: Props) {
             )}
 
             {devices.length === 0 && !erro && (
-                <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6 text-center">
+                <div className="bg-[#13111c] border border-[#2d2040] rounded-lg p-6 text-center">
                     <p className="text-xs font-mono text-[#484f58] tracking-wider">
                         NENHUM DISPOSITIVO REGISTRADO
                     </p>
@@ -111,10 +110,9 @@ export default function ListarDispositivos({ refresh }: Props) {
                 const s = STATUS_CONFIG[d.status] ?? STATUS_CONFIG.offline
                 return (
                     <div key={d.id}
-                        className="bg-[#161b22] border border-[#30363d] rounded-lg p-4 flex flex-col gap-3
-                                   hover:border-[#484f58] transition-colors">
+                        className="bg-[#13111c] border border-[#2d2040] rounded-lg p-4 flex flex-col gap-3
+                                   hover:border-[#3d2f58] transition-colors">
 
-                        {/* Linha superior */}
                         <div className="flex items-start justify-between gap-2">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full shadow-sm"
@@ -128,17 +126,16 @@ export default function ListarDispositivos({ refresh }: Props) {
                             </span>
                         </div>
 
-                        {/* Dados */}
                         <div className="grid grid-cols-3 gap-2 text-[11px] font-mono">
-                            <div className="bg-[#0d1117] rounded px-2 py-1.5 border border-[#30363d]">
+                            <div className="bg-[#0d0d14] rounded px-2 py-1.5 border border-[#2d2040]">
                                 <p className="text-[#484f58] uppercase tracking-wider text-[9px] mb-0.5">Tipo</p>
                                 <p className="text-[#8b949e]">{d.tipo}</p>
                             </div>
-                            <div className="bg-[#0d1117] rounded px-2 py-1.5 border border-[#30363d]">
+                            <div className="bg-[#0d0d14] rounded px-2 py-1.5 border border-[#2d2040]">
                                 <p className="text-[#484f58] uppercase tracking-wider text-[9px] mb-0.5">IP / Node</p>
-                                <p className="text-[#00d4ff]">{d.ip || "—"}</p>
+                                <p className="text-[#a855f7]">{d.ip || "—"}</p>
                             </div>
-                            <div className="bg-[#0d1117] rounded px-2 py-1.5 border border-[#30363d]">
+                            <div className="bg-[#0d0d14] rounded px-2 py-1.5 border border-[#2d2040]">
                                 <p className="text-[#484f58] uppercase tracking-wider text-[9px] mb-0.5">Registrado</p>
                                 <p className="text-[#8b949e]">
                                     {new Date(d.criadoEm).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
@@ -147,13 +144,12 @@ export default function ListarDispositivos({ refresh }: Props) {
                         </div>
 
                         {d.descricao && (
-                            <p className="text-[11px] font-mono text-[#484f58] border-l-2 border-[#30363d] pl-2">
+                            <p className="text-[11px] font-mono text-[#484f58] border-l-2 border-[#2d2040] pl-2">
                                 {d.descricao}
                             </p>
                         )}
 
-                        {/* Ações */}
-                        <div className="flex items-center gap-2 pt-1 border-t border-[#30363d]">
+                        <div className="flex items-center gap-2 pt-1 border-t border-[#2d2040]">
                             <span className="text-[9px] font-mono text-[#484f58] uppercase tracking-wider mr-1">
                                 Status:
                             </span>
@@ -164,7 +160,7 @@ export default function ListarDispositivos({ refresh }: Props) {
                                         className={`text-[9px] font-mono px-2 py-0.5 rounded border transition-all cursor-pointer
                                             ${d.status === st
                                                 ? `${cfg.bg} ${cfg.border}`
-                                                : "bg-transparent border-[#30363d] text-[#484f58] hover:border-[#8b949e]"
+                                                : "bg-transparent border-[#2d2040] text-[#484f58] hover:border-[#8b949e]"
                                             }`}
                                         style={d.status === st ? { color: cfg.cor } : {}}>
                                         {cfg.label}
@@ -175,8 +171,8 @@ export default function ListarDispositivos({ refresh }: Props) {
                             <div className="flex-1" />
 
                             <button onClick={() => abrirModal(d)}
-                                className="text-[10px] font-mono px-3 py-1 rounded border border-[#00d4ff30]
-                                           text-[#00d4ff] hover:bg-[#00d4ff15] transition-colors cursor-pointer">
+                                className="text-[10px] font-mono px-3 py-1 rounded border border-[#a855f730]
+                                           text-[#a855f7] hover:bg-[#a855f715] transition-colors cursor-pointer">
                                 Editar
                             </button>
                             <button onClick={() => deletar(d.id)}
@@ -189,13 +185,12 @@ export default function ListarDispositivos({ refresh }: Props) {
                 )
             })}
 
-            {/* Modal de edição */}
             {modalAberto && (
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                    <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-6 w-[420px] flex flex-col gap-4">
-                        <div className="flex items-center gap-2 border-b border-[#30363d] pb-3">
-                            <div className="w-1.5 h-4 bg-[#ffaa00] rounded-sm" />
-                            <h2 className="text-xs font-mono text-[#ffaa00] tracking-widest uppercase">
+                    <div className="bg-[#13111c] border border-[#2d2040] rounded-lg p-6 w-[420px] flex flex-col gap-4">
+                        <div className="flex items-center gap-2 border-b border-[#2d2040] pb-3">
+                            <div className="w-1.5 h-4 bg-[#f59e0b] rounded-sm" />
+                            <h2 className="text-xs font-mono text-[#f59e0b] tracking-widest uppercase">
                                 Editar Dispositivo #{editId.current}
                             </h2>
                         </div>
@@ -212,8 +207,8 @@ export default function ListarDispositivos({ refresh }: Props) {
                                     value={editForm[f.key as keyof typeof editForm]}
                                     onChange={e => setEditForm({ ...editForm, [f.key]: e.target.value })}
                                     placeholder={f.placeholder}
-                                    className="bg-[#0d1117] border border-[#30363d] text-[#e6edf3] text-sm font-mono
-                                               rounded px-3 py-2 focus:outline-none focus:border-[#ffaa00] transition-colors
+                                    className="bg-[#0d0d14] border border-[#2d2040] text-[#e6edf3] text-sm font-mono
+                                               rounded px-3 py-2 focus:outline-none focus:border-[#f59e0b] transition-colors
                                                placeholder:text-[#484f58]"
                                 />
                             </div>
@@ -223,8 +218,8 @@ export default function ListarDispositivos({ refresh }: Props) {
                             <label className="text-[10px] font-mono text-[#8b949e] tracking-widest uppercase">Tipo</label>
                             <select value={editForm.tipo}
                                 onChange={e => setEditForm({ ...editForm, tipo: e.target.value })}
-                                className="bg-[#0d1117] border border-[#30363d] text-[#e6edf3] text-sm font-mono
-                                           rounded px-3 py-2 focus:outline-none focus:border-[#ffaa00] transition-colors">
+                                className="bg-[#0d0d14] border border-[#2d2040] text-[#e6edf3] text-sm font-mono
+                                           rounded px-3 py-2 focus:outline-none focus:border-[#f59e0b] transition-colors">
                                 {tiposDispositivo.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                         </div>
@@ -234,20 +229,20 @@ export default function ListarDispositivos({ refresh }: Props) {
                             <textarea value={editForm.descricao}
                                 onChange={e => setEditForm({ ...editForm, descricao: e.target.value })}
                                 rows={2}
-                                className="bg-[#0d1117] border border-[#30363d] text-[#e6edf3] text-sm font-mono
-                                           rounded px-3 py-2 focus:outline-none focus:border-[#ffaa00] transition-colors
+                                className="bg-[#0d0d14] border border-[#2d2040] text-[#e6edf3] text-sm font-mono
+                                           rounded px-3 py-2 focus:outline-none focus:border-[#f59e0b] transition-colors
                                            resize-none placeholder:text-[#484f58]"
                             />
                         </div>
 
                         <div className="flex gap-3 justify-end pt-1">
                             <button onClick={salvarEdicao}
-                                className="text-xs font-mono px-4 py-2 rounded border border-[#ffaa00]
-                                           text-[#ffaa00] hover:bg-[#ffaa0015] transition-colors cursor-pointer tracking-wider">
+                                className="text-xs font-mono px-4 py-2 rounded border border-[#f59e0b]
+                                           text-[#f59e0b] hover:bg-[#f59e0b15] transition-colors cursor-pointer tracking-wider">
                                 [ Salvar ]
                             </button>
                             <button onClick={() => setModalAberto(false)}
-                                className="text-xs font-mono px-4 py-2 rounded border border-[#30363d]
+                                className="text-xs font-mono px-4 py-2 rounded border border-[#2d2040]
                                            text-[#8b949e] hover:border-[#ff4444] hover:text-[#ff4444] transition-colors cursor-pointer tracking-wider">
                                 [ Cancelar ]
                             </button>

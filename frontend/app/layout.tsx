@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HMI Industrial",
-  description: "Sistema de gerenciamento industrial",
+  title: "IHM Industrial",
+  description: "Sistema de monitoramento e controle industrial",
 };
 
 export default function RootLayout({

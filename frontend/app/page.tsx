@@ -4,9 +4,9 @@ import ListarUsuario from "./components/ListarUsuario"
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
+        <div className="min-h-screen bg-[#0d0d14] text-[#e6edf3]">
             <Header name="Gerenciar Usuários" />
-            <div className="px-6 py-2 bg-[#0d1117] border-b border-[#30363d]">
+            <div className="px-6 py-2 bg-[#0d0d14] border-b border-[#2d2040]">
                 <span className="text-[10px] font-mono text-[#484f58] tracking-widest">
                     MÓDULO: USER MANAGER
                 </span>
